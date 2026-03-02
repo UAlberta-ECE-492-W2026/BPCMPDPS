@@ -1,0 +1,51 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-bpcmpdps}
+      POSTGRES_USER: ${POSTGRES_USER:-bpcmpdps}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-bpcmpdps}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
+  web:
+    build: .
+    env_file: .env
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    command: ["bash", "entrypoint.sh"]
+
+  celery:
+    build: .
+    env_file: .env
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - .:/app
+    command: ["celery", "-A", "config", "worker", "-l", "info"]
+
+  celery-beat:
+    build: .
+    env_file: .env
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - .:/app
+    command: ["celery", "-A", "config", "beat", "-l", "info"]
+
+volumes:
+  postgres_data:
