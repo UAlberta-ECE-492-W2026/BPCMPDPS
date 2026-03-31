@@ -46,3 +46,13 @@ class AlertDelivery(models.Model):
 
     def __str__(self):
         return f"AlertDelivery(id={self.id}, status={self.status})"
+    
+
+class ActualDemand(models.Model):
+    timestamp = models.DateTimeField()
+    actual_kw = models.FloatField(null=True, blank=True)
+    modeled_kw = models.FloatField(null=True, blank=True)
+    market_price = models.FloatField(null=True, blank=True)
+
+    class Meta:
+        ordering = ['timestamp']
