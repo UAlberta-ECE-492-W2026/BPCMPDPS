@@ -1,3 +1,5 @@
+#config/urls.py
+
 """
 URL configuration for config project.
 
@@ -21,4 +23,5 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/auth/", include("accounts.urls")),
     path("api/alerts/", include("alerts.urls")),
+    path("api/forecasting/", include("forecasting.urls")),
 ]
