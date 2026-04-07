@@ -40,15 +40,18 @@ class ForecastViewSet(viewsets.ReadOnlyModelViewSet):
     @action(detail=False, methods=["get"])
     def latest(self, request):
         # REAL-TIME MODE (keep for future live deployment)
-        # now = timezone.now()
-        # qs = DemandForecast.objects.filter(target_time__gte=now).order_by("target_time")[:13]
+        now = timezone.now()
+        qs = DemandForecast.objects.filter(
+            target_time__gte=now,
+            horizon_steps=12,
+        ).order_by("target_time")[:60]
 
         # TESTING MODE (2025 simulated future)
-        latest_record = DemandForecast.objects.order_by("-target_time").first()
-        if latest_record is None:
-            return Response([])
+        # latest_record = DemandForecast.objects.order_by("-target_time").first()
+        # if latest_record is None:
+        #     return Response([])
 
-        now = latest_record.target_time
-        qs = DemandForecast.objects.filter(target_time__gte=now).order_by("target_time")[:13]
+        # now = latest_record.target_time
+        # qs = DemandForecast.objects.filter(target_time__gte=now).order_by("target_time")[:13]
 
         return Response(DemandForecastSerializer(qs, many=True).data)

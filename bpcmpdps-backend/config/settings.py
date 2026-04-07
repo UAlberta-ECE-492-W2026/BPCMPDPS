@@ -167,8 +167,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 from celery.schedules import crontab
 
 CELERY_BEAT_SCHEDULE = {
-    "run-forecast-every-15-min": {
+    "run-forecast-every-hour": {
         "task": "forecasting.tasks.run_forecasting_pipeline",
-        "schedule": crontab(minute="*/15"),
+        "schedule": crontab(minute=0),
     },
 }

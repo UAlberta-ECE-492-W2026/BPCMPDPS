@@ -90,10 +90,10 @@ def predict_12_to_15_hour_window(
         weather_by_horizon = {}
 
     # REAL-TIME MODE (future use)
-    # now = timezone.now()
+    now = timezone.now()
 
     # TESTING MODE (2025 simulation)
-    now = pd.to_datetime(recent_df["timestamp"].iloc[-1])
+    # now = pd.to_datetime(recent_df["timestamp"].iloc[-1])
     results = []
 
     for horizon in range(12, 16):

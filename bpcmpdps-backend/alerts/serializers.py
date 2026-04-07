@@ -4,8 +4,8 @@ from .models import ThresholdConfig, AlertEvent
 class ThresholdConfigSerializer(serializers.ModelSerializer):
     class Meta:
         model = ThresholdConfig
-        fields = ["demand_kw_threshold", "price_threshold", "updated_at"]
-        read_only_fields = ["updated_at"]
+        fields = ["demand_kw_threshold", "price_threshold", "created_at"]
+        read_only_fields = ["created_at"]
 
 class TestAlertSerializer(serializers.Serializer):
     demand_kw = serializers.FloatField()

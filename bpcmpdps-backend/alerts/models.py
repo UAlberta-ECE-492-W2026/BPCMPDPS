@@ -2,13 +2,16 @@ from django.conf import settings
 from django.db import models
 
 class ThresholdConfig(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="threshold_configs")
     demand_kw_threshold = models.FloatField(default=500.0)
     price_threshold = models.FloatField(default=150.0)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
 
     def __str__(self):
-        return f"ThresholdConfig(user={self.user_id})"
+        return f"ThresholdConfig(user={self.user_id}, created={self.created_at})"
 
 class AlertEvent(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)

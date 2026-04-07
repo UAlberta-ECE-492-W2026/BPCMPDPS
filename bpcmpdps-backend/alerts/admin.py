@@ -3,7 +3,7 @@ from .models import ThresholdConfig, AlertEvent, AlertDelivery
 
 @admin.register(ThresholdConfig)
 class ThresholdConfigAdmin(admin.ModelAdmin):
-    list_display = ("user", "demand_kw_threshold", "price_threshold", "updated_at")
+    list_display = ("user", "demand_kw_threshold", "price_threshold", "created_at")
 
 @admin.register(AlertEvent)
 class AlertEventAdmin(admin.ModelAdmin):
