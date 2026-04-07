@@ -1,9 +1,11 @@
+import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import HomePage from './pages/HomePage';
 import ThresholdPage from './pages/ThresholdPage';
 import NotificationsPage from './pages/NotificationsPage';
 import ChartsPage from './pages/ChartsPage';
+
 
 export default function App() {
   return (
