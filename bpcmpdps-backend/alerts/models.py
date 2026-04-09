@@ -59,3 +59,17 @@ class ActualDemand(models.Model):
 
     class Meta:
         ordering = ['timestamp']
+
+
+class EnergyReading(models.Model):
+    received_at = models.DateTimeField(auto_now_add=True)
+    uptime_ms = models.BigIntegerField()
+    wh = models.IntegerField()
+    total_wh = models.IntegerField()
+
+    class Meta:
+        ordering = ['-received_at']
+
+    def __str__(self):
+        return f"EnergyReading(id={self.id}, total_wh={self.total_wh}, received={self.received_at})"
+
