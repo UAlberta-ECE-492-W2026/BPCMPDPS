@@ -26,37 +26,50 @@ ChartJS.register(
 export default function ChartsPage() {
   const [labels, setLabels] = useState([]);
   const [powerData, setPowerData] = useState([]);
-  const [tempData, setTempData] = useState([]);
+  const [priceData, setPriceData] = useState([]);
 
   const token = localStorage.getItem('token');
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/forecasting/latest/`, {
-          method: 'GET',
-          headers: {
-            Authorization: `Token ${token}`,
-          },
-        });
+        // Fetch demand forecast and price forecast in parallel
+        const [demandRes, priceRes] = await Promise.all([
+          fetch(`${API_BASE_URL}/api/forecasting/latest/`, {
+            headers: { Authorization: `Token ${token}` },
+          }),
+          fetch(`${API_BASE_URL}/api/pricemodel/latest/`, {
+            headers: { Authorization: `Token ${token}` },
+          }),
+        ]);
 
-        if (!response.ok) throw new Error('Failed to load forecasting data');
+        if (!demandRes.ok) throw new Error('Failed to load demand forecast');
+        if (!priceRes.ok) throw new Error('Failed to load price forecast');
 
-        const data = await response.json();
+        const demandData = await demandRes.json();
+        const priceRaw = await priceRes.json();
 
-        // Build labels: "Now" for the first point, actual time for the rest
-        const newLabels = data.map((entry, i) => {
+        // Use demand data for labels and power values
+        const newLabels = demandData.map((entry, i) => {
           if (i === 0) return 'Now';
           const target = new Date(entry.target_time);
           return target.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         });
 
-        const newPower = data.map((entry) => entry.predicted_demand_kw);
+        const newPower = demandData.map((entry) => entry.predicted_demand_kw);
+
+        // Price predictions cover hours 12-15, so pad the front with nulls
+        // to align them at the correct x-axis positions
+        const offset = demandData.length - priceRaw.length;
+        const newPrice = demandData.map((_, i) => {
+          const priceIndex = i - offset;
+          if (priceIndex < 0 || priceIndex >= priceRaw.length) return null;
+          return priceRaw[priceIndex]?.predicted_Price ?? null;
+        });
 
         setLabels(newLabels);
         setPowerData(newPower);
-        // Temperature not available from backend yet — placeholder
-        setTempData(data.map(() => null));
+        setPriceData(newPrice);
       } catch (err) {
         console.error(err);
       }
@@ -77,11 +90,11 @@ export default function ChartsPage() {
         tension: 0.3,
       },
       {
-        label: 'Temperature (°C)',
-        data: tempData,
+        label: 'Price ($)',
+        data: priceData,
         borderColor: '#ef4444',
         backgroundColor: 'rgba(239, 68, 68, 0.15)',
-        yAxisID: 'yTemp',
+        yAxisID: 'yPrice',
         tension: 0.3,
       },
     ],
@@ -105,10 +118,11 @@ export default function ChartsPage() {
         title: { display: true, text: 'Power (kW)' },
         grid: { drawOnChartArea: true },
       },
-      yTemp: {
+      yPrice: {
         type: 'linear',
         position: 'right',
-        title: { display: true, text: 'Temperature (°C)' },
+        min: 0,
+        title: { display: true, text: 'Price ($)' },
         grid: { drawOnChartArea: false },
       },
     },

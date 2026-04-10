@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'alerts',
     'forecasting',
+    'Pricemodel',
 ]
 
 MIDDLEWARE = [
@@ -176,5 +177,13 @@ CELERY_BEAT_SCHEDULE = {
     "run-forecast-every-hour": {
         "task": "forecasting.tasks.run_forecasting_pipeline",
         "schedule": crontab(minute=0),
+    },
+    "run-price-every-hour": {
+        "task": "Pricemodel.tasks.run_price_pipeline",
+        "schedule": crontab(minute=0),
+    },
+    "check-thresholds-every-hour": {
+        "task": "alerts.tasks.check_thresholds_and_alert",
+        "schedule": crontab(minute=5),
     },
 }
