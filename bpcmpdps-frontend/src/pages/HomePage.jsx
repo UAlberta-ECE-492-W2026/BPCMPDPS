@@ -13,10 +13,6 @@ export default function HomePage() {
             Threshold Page
           </Link>
 
-          <Link to="/notifications" className="btn">
-            Notification Page
-          </Link>
-
           <Link to="/charts" className="btn">
             Charts Page
           </Link>

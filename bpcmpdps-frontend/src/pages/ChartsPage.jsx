@@ -49,6 +49,9 @@ export default function ChartsPage() {
         const demandData = await demandRes.json();
         const priceRaw = await priceRes.json();
 
+        console.log('Demand forecast count:', demandData.length, demandData);
+        console.log('Price forecast count:', priceRaw.length, priceRaw);
+
         // Use demand data for labels and power values
         const newLabels = demandData.map((entry, i) => {
           if (i === 0) return 'Now';
@@ -104,7 +107,7 @@ export default function ChartsPage() {
     responsive: true,
     interaction: { mode: 'index', intersect: false },
     plugins: {
-      title: { display: true, text: '15-Hour Forecast', font: { size: 18 } },
+      title: { display: true, text: '12-Hour Forecast', font: { size: 18 } },
       legend: { position: 'top' },
     },
     scales: {

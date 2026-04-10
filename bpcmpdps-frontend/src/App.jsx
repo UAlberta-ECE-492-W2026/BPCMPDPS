@@ -13,7 +13,6 @@ export default function App() {
       <Route path="/" element={<LoginPage />} />
       <Route path="/home" element={<HomePage />} />
       <Route path="/threshold" element={<ThresholdPage />} />
-      <Route path="/notifications" element={<NotificationsPage />} />
       <Route path="/charts" element={<ChartsPage />} />
     </Routes>
   );
