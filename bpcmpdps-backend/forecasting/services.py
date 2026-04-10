@@ -8,15 +8,33 @@ from .predict import predict_12_to_15_hour_window
 import requests
 
 def get_recent_meter_data():
-    df = pd.read_csv("forecasting/data/demand_weather_testing.csv")
 
+    csv_path = "forecasting/data/demand_weather_testing.csv"
+    offset_path = "forecasting/data/.meter_offset"
+    df = pd.read_csv(csv_path)
     df["timestamp"] = pd.to_datetime(df["timestamp"])
     df = df.sort_values("timestamp")
-
     df = df[["timestamp", "demand_kw"]]
 
-    # last ~10 days (needed for lag features)
-    return df.tail(240)
+    window = 240
+    # Read offset
+    try:
+        with open(offset_path, "r") as f:
+            offset = int(f.read().strip())
+    except Exception:
+        offset = 0
+
+    # Clamp offset
+    if offset + window > len(df):
+        offset = 0
+
+    window_df = df.iloc[offset:offset+window]
+
+    # Update offset for next run
+    with open(offset_path, "w") as f:
+        f.write(str(offset + 1))
+
+    return window_df
 
 
 def get_weather_forecast_by_horizon(now):
